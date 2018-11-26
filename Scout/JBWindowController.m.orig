@@ -1,0 +1,310 @@
+//
+//  JBWindowController.m
+//  Scout
+//
+//  Created by Jon Buys on 12/21/12.
+//  Copyright (c) 2012 Farmdog Software. All rights reserved.
+//
+
+#import "JBWindowController.h"
+#import "JBFirstRunViewController.h"
+#import "JBPost.h"
+#import "JBSiteExport.h"
+#import  "JBAppController.h"
+
+@implementation JBWindowController
+
+- (id)init {
+    self = [super init];
+    if( self != nil ) {
+        // Do my quick initialization here
+    }
+    return self;
+}
+
+
+#pragma mark First Launch
+- (void)loadFirstLaunch
+{
+    NSLog(@"First launch, load the JBFirstRunViewController");
+    [mainWindow setStyleMask:[mainWindow styleMask] & ~NSResizableWindowMask];
+        
+    if (![NSBundle loadNibNamed:@"First Run View" owner:self])
+    {
+        NSLog(@"Error loading Xib for First Run View!");
+        
+    } else {
+        [firstRunView setFrame:[mainView frame]];
+        [mainView setSubviews:[NSArray arrayWithObject:firstRunView]];
+        NSLog(@"We should have the first run view now.");
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:YES forKey:@"firstLaunch"];
+    }
+}
+
+- (IBAction)finishFirstRun:(id)sender
+{
+    JBPost *post = [[JBPost alloc] initWithTitle:@"First Post" andText:@"" andPath:@"" andDate:[NSDate date]];
+    [postArrayController addObject:post];
+    
+    [mainSplitView setFrame:[mainView frame]];
+    [mainTextEditorView setFrame:[rightSplitView frame]];
+    [mainView setWantsLayer:YES];
+    [mainView setSubviews:[NSArray arrayWithObject:mainSplitView]];
+    [rightSplitView setSubviews:[NSArray arrayWithObject:mainTextEditorView]];
+    [mainWindow setStyleMask:[mainWindow styleMask] | NSResizableWindowMask];
+
+    [mainWindow makeFirstResponder:mainTextView];
+    [mainWindow setStyleMask:[mainWindow styleMask] | NSResizableWindowMask];
+    [myAppController normalStart];
+}
+
+#pragma mark Normal Run
+
+- (void)normalStart
+{
+    [mainSplitView setFrame:[mainView frame]];
+    [mainTextEditorView setFrame:[rightSplitView frame]];
+    [mainView setWantsLayer:YES];
+    [mainView setSubviews:[NSArray arrayWithObject:mainSplitView]];
+    [rightSplitView setSubviews:[NSArray arrayWithObject:mainTextEditorView]];
+    [mainWindow makeFirstResponder:mainTextView];
+
+}
+
+- (BOOL)loadView:(NSView *)viewToLoad intoView:(NSView *)parentView
+{
+    [viewToLoad setFrame:[parentView frame]];
+        
+    transition = [CATransition animation];
+    [transition setType:kCATransitionFade];
+    [transition setDuration:0.25];
+        
+    NSDictionary *ani = [NSDictionary dictionaryWithObject:transition forKey:@"subviews"];
+    [parentView setAnimations:ani];
+        
+    [[parentView animator] replaceSubview:[[parentView subviews] objectAtIndex:0] with:viewToLoad];
+
+    return NO;
+}
+
+
+#pragma mark Media Manager
+
+- (IBAction)toggleMediaManager:(id)sender
+{
+    if (mediaManagerShown)
+    {
+        [self loadView:mainTextEditorView intoView:rightSplitView];
+        mediaManagerShown = NO;
+        [mainWindow makeFirstResponder:mainTextView];
+
+        
+    } else {
+
+        
+        if (![NSBundle loadNibNamed:@"Media Manager View" owner:self])
+        {
+            NSLog(@"Error loading Xib for Media Manager View!");
+            
+        } else {
+            
+
+        [self loadView:mediaManagerView intoView:rightSplitView];
+        mediaManagerShown = YES;
+        
+        }
+    }
+}
+
+
+- (IBAction)togglePrefs:(id)sender
+{
+    if (prefsShown)
+    {
+        [prefsController doneEditPrefs];
+        [self loadView:mainTextEditorView intoView:rightSplitView];
+        prefsShown = NO;
+        [mainWindow makeFirstResponder:mainTextView];
+        
+    } else {
+        
+        
+        if (![NSBundle loadNibNamed:@"Prefs" owner:self])
+        {
+            NSLog(@"Error loading Xib for Prefs!");
+            
+        } else {
+            
+            
+            [self loadView:prefsView intoView:rightSplitView];
+            prefsShown = YES;
+            
+        }
+    }
+}
+
+- (IBAction) styleSelected:(id)sender
+{
+    [myAppController setTextView1Styles:[[stylePopUpButton selectedItem] title]];
+}
+
+- (IBAction)togglePreview:(id)sender
+{
+    if (previewShown)
+    {
+        [self loadView:mainTextEditorView intoView:rightSplitView];
+        previewShown = NO;
+        [mainWindow makeFirstResponder:mainTextView];
+        
+    } else {
+        
+        
+        if (![NSBundle loadNibNamed:@"Preview" owner:self])
+        {
+            NSLog(@"Error loading Xib for Preview!");
+            
+        } else {
+            
+            
+            [self loadView:previewView intoView:rightSplitView];
+
+            [appDelegate saveText];
+
+            
+            
+            JBPost *currentPost = [[postArrayController selectedObjects] objectAtIndex:0];
+            
+            JBPost *copyOfPost = [[JBPost alloc] init];
+            
+            
+            [copyOfPost setTitle:[currentPost title]];
+            //        NSLog(@"copyOfPost Title = %@", [copyOfPost title]);
+            //        NSLog(@"currentPost Title = %@", [currentPost title]);
+            
+            [copyOfPost setPath:[currentPost path]];
+            //        NSLog(@"copyOfPost Path = %@", [copyOfPost path]);
+            //        NSLog(@"currentPost Path = %@", [currentPost path]);
+            
+            [copyOfPost setDate:[currentPost date]];
+            //        NSLog(@"copyOfPost Date = %@", [copyOfPost date]);
+            //        NSLog(@"currentPost Date = %@", [currentPost date]);
+            
+            
+           // NSLog(@"before = %@", [copyOfPost text]);
+            [copyOfPost setText:[mainTextView string]];
+            [currentPost setText:[mainTextView string]];
+            
+           // NSLog(@"after = %@", [copyOfPost text]);
+
+            NSString *firstLine;
+            
+            NSScanner* scanner = [NSScanner scannerWithString:[currentPost text]];
+            [scanner scanUpToString:@"\n" intoString:&firstLine];
+            NSString *firstLineStripped = [[copyOfPost text] substringFromIndex:[firstLine length]];
+            
+            [copyOfPost setText:firstLineStripped];
+
+            [previewController previewText:copyOfPost];
+
+            previewShown = YES;
+            
+        }
+    }
+}
+
+- (IBAction)toggleThemeChooser:(id)sender
+{
+    if (themeChooserViewShown)
+    {
+        [self loadView:mainTextEditorView intoView:rightSplitView];
+        themeChooserViewShown = NO;
+        [mainWindow makeFirstResponder:mainTextView];
+
+        
+    } else {
+        
+        
+        if (![NSBundle loadNibNamed:@"Theme Chooser" owner:self])
+        {
+            NSLog(@"Error loading Xib for Theme Chooser!");
+            
+        } else {
+            
+            
+            [self loadView:themeChooserView intoView:rightSplitView];
+            themeChooserViewShown = YES;
+            [mainWindow makeFirstResponder:mainThemeCollectionView];
+            
+        }
+    }
+}
+
+
+#pragma mark FTP Controller
+
+- (IBAction)toggleFTPView:(id)sender
+{
+    if (ftpControllerShown)
+    {
+        [self loadView:mainTextEditorView intoView:rightSplitView];
+        ftpControllerShown = NO;
+        [mainWindow makeFirstResponder:mainTextView];
+        
+        
+    } else {
+        
+        
+        if (![NSBundle loadNibNamed:@"ftpView" owner:self])
+        {
+            NSLog(@"Error loading Xib for FTP Controller View!");
+            
+        } else {
+            
+            
+            [self loadView:ftpControllerView intoView:rightSplitView];
+            ftpControllerShown = YES;
+            [siteExporter exportPostsForFTP];
+            [ftpController publishSite];
+            
+        }
+    }
+}
+
+# pragma mark TextEditor
+
+- (IBAction)loadTextEditor:(id)sender
+{
+    [self loadView:mainTextEditorView intoView:rightSplitView];
+    [mainWindow makeFirstResponder:mainTextView];
+}
+
+# pragma mark glue methods
+
+- (void)dropFromMediaManager:(NSString *)fileToUse
+{
+    [mainTextView dropFromMediaManager:fileToUse];
+    [self toggleMediaManager:nil];
+}
+
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if (menuItem == previewPostMenuItem)
+    {
+        if([mainTextView string]==(id) [NSNull null] || [[mainTextView string] length]==0 || [[mainTextView string]isEqual:@""])
+        {
+            return NO;
+        } else {
+            return YES;
+        }
+        
+    } else {
+        return YES;
+    }
+}
+
+
+@end
+
+

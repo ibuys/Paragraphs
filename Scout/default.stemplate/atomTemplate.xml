@@ -1,0 +1,13 @@
+ <entry>
+   <title>YYYY_SCOUT_POST_TITLE_YYYY</title>
+   <link href="YYYY_SCOUT_POST_URL_YYYY"/>
+   <published>YYYY_SCOUT_POST_DATE_YYYY</published>
+   <updated>YYYY_SCOUT_POST_DATE_YYYY</updated>
+   <id>YYYY_SCOUT_POST_URL_YYYY</id>
+   <author>
+     <name>YYYY_SCOUT_AUTHOR_YYYY</name>
+     <uri>YYYY_SCOUT_POST_URL_YYYY/</uri>
+   </author>
+   <content type="html">YYYY_SCOUT_POST_CONTENT_YYYY</content>
+ </entry>
+

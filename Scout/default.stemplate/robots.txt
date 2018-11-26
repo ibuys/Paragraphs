@@ -1,0 +1,8 @@
+# robots.txt for YYYY_SCOUT_URL_YYYY
+
+User-agent: *
+Disallow: /media/
+Disallow: /images/ 
+Disallow: /stylesheets/
+Disallow: /README
+Disallow: /CNAME

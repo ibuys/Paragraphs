@@ -1,0 +1,79 @@
+editor :
+    foreground: 000000
+    background: FFFFFF
+    caret: 6c71c4
+
+EMPH
+    font-style: italic
+
+STRONG
+    font-style: bold
+
+LINK
+    font-style: underlined
+
+editor-selection:
+    foreground: 3B444B
+    background: FAEBD7
+
+editor-current-line:
+    background: F2F3F4
+
+H1
+foreground: 6c71c4 # violet
+font-style: bold
+
+H2
+foreground: 6c71c4 # violet
+font-style: bold
+
+H3
+foreground: 6c71c4 # violet
+
+H4
+foreground: 268bd2 # blue
+
+H5
+foreground: 268bd2 # blue
+
+H6
+foreground: 268bd2 # blue
+
+HRULE
+foreground: 586e75 # base01
+
+LIST_BULLET
+foreground: b58900 # yellow
+
+LIST_ENUMERATOR
+foreground: b58900 # yellow
+
+LINK
+foreground: 268bd2 # blue
+
+AUTO_LINK_URL
+foreground: 268bd2 # blue
+
+AUTO_LINK_EMAIL
+foreground: 268bd2 # blue
+
+IMAGE
+foreground: 268bd2 # blue 
+
+REFERENCE
+foreground: 80b58900 # yellow, reduced alpha
+
+CODE
+foreground: 859900 # green
+
+HTML_ENTITY
+foreground: 6c71c4 # violet
+
+COMMENT
+foreground: 93a1a1 # base1
+
+VERBATIM
+foreground: 859900 # green
+
+BLOCKQUOTE
+foreground: d33682 # magenta

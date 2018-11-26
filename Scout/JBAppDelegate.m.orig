@@ -1,0 +1,393 @@
+//
+//  JBAppDelegate.m
+//  Scout
+//
+//  Created by Jonathan Buys on 11/19/12.
+//  Copyright (c) 2012 Farmdog Software. All rights reserved.
+//
+
+#import "JBAppDelegate.h"
+#import "JBPost.h"
+#import "JBAppSupportDir.h"
+#import "JBAppController.h"
+
+@implementation JBAppDelegate
+@synthesize markdownFilesArray;
+
+
+-(id)init {
+    if ( self = [super init] )
+    {
+        markdownFilesArray = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
+-(void)awakeFromNib
+{
+    
+    [self performSelector:@selector(checkForText) withObject:nil afterDelay:0.05];
+    
+}
+
+-(void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+    [[textScrollView contentView] setPostsBoundsChangedNotifications: YES];
+    
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter] ;
+    [center addObserver: self
+               selector: @selector(boundsDidChangeNotification:)
+                   name: NSViewBoundsDidChangeNotification
+                 object: [textScrollView contentView]];
+
+}
+
+-(void)checkForText
+{
+    if([mainTextView string]==(id) [NSNull null] || [[mainTextView string] length]==0 || [[mainTextView string]isEqual:@""])
+    {
+        [self disablePreview:nil];
+    } else {
+        [self enablePreview:nil];
+    }
+}
+
+#pragma mark application delegate methods
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
+                    hasVisibleWindows:(BOOL)flag
+{
+    if( !flag )
+        [_window makeKeyAndOrderFront:nil];
+    
+    return YES;
+}
+
+- (void)windowWillStartLiveResize:(NSNotification *)notification
+{
+    
+    if (attachedWindow)
+    {
+        [self closeMAWindow:nil];
+    }
+    
+}
+
+- (void)windowWillEnterFullScreen:(NSNotification *)notification
+{
+    [mainTextView setFont:[NSFont fontWithName:@"mplus-1c-regular" size:20]];
+    [mainTextView setTextContainerInset:NSMakeSize(220.0f, 300.0f)];
+    
+    NSRect insertionRect=[[mainTextView layoutManager] boundingRectForGlyphRange:[mainTextView selectedRange] inTextContainer:[mainTextView textContainer]];
+    NSPoint scrollPoint=NSMakePoint(0,insertionRect.origin.y+insertionRect.size.height+2*300-[[NSScreen mainScreen] frame].size.height);
+    [mainTextView scrollPoint:scrollPoint];
+    //[textScrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+    
+    [appController readClearTextStylesFromTextView];
+
+    if (attachedWindow)
+    {
+        [self closeMAWindow:nil];
+    }
+    
+}
+
+- (void)windowWillExitFullScreen:(NSNotification *)notification
+{
+    [mainTextView setFont:[NSFont fontWithName:@"mplus-1c-regular" size:14]];
+    [mainTextView setTextContainerInset:NSMakeSize(15.0f, 5.0f)];
+  //  [textScrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
+
+    [appController readClearTextStylesFromTextView];
+
+    if (attachedWindow)
+    {
+        [self closeMAWindow:nil];
+    }
+    
+}
+
+
+
+- (void)windowDidResignKey:(NSNotification *)notification
+{
+    [self saveText];
+    if (!attachedWindow)
+    {
+        [self closeMAWindow:nil];
+    }
+
+}
+
+
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+    [self saveText];
+    if (attachedWindow)
+    {
+        [self closeMAWindow:nil];
+    }
+
+}
+
+-(void)saveText
+{
+    //   NSLog(@"saveText");
+    JBPost *currentPost = [[markdownFilesArrayContoller selectedObjects] objectAtIndex:0];
+    
+    // I need to create this temporary JBPost object and copy the data into it so I do not cause a weird syntax highlighting bug in the GUI.
+    //    JBPost *currentPost = [[JBPost alloc] init];
+    //    currentPost.title = livePost.title;
+    //    currentPost.text = livePost.text;
+    //    currentPost.path = livePost.path;
+    //    currentPost.date = livePost.date;
+    
+    NSString *currentPath = [currentPost path];
+    NSString *currentTitle = [currentPost title];
+    NSString *currentText = [mainTextView string];
+    NSDate *currentDate = [currentPost date];
+    
+    
+    JBAppSupportDir *myAppSupDir = [[JBAppSupportDir alloc] init];
+    NSString *scoutDir = [myAppSupDir applicationSupportDirectory];
+    NSString *markdownDirectory = [scoutDir stringByAppendingPathComponent:@"posts"];
+    
+    NSString *titleString;
+    
+    NSScanner* scanner = [NSScanner scannerWithString:[mainTextView string]];
+    
+    [scanner scanUpToString:@"\n" intoString:&titleString];
+    
+    titleString = [titleString stringByReplacingOccurrencesOfString:@"title: " withString:@""];
+    
+    currentTitle = titleString;
+<<<<<<< local
+    if(currentTitle==(id) [NSNull null] || [currentTitle length]==0 || [currentTitle isEqual:@""])
+=======
+    if(currentTitle==(id) [NSNull null] || [currentTitle length]==0 || [currentTitle isEqual: @""])
+>>>>>>> other
+    {
+        return;
+        // meh, never mind.
+    }
+    
+    [currentPost setValue:currentTitle forKey:@"title"];
+    
+    if(currentPath==(id) [NSNull null] || [currentPath length]==0 || [currentPath isEqual:@""])
+    {
+        //NSLog(@"currentPath is NULL");
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd-HH-mm-SSSS"];
+        
+        NSString *formattedDateString = [dateFormatter stringFromDate:currentDate];
+        NSString *formattedTitle = [currentTitle stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+        NSString *one = [formattedDateString stringByAppendingString:@"##"];
+        NSString *two = [one stringByAppendingString:formattedTitle];
+        
+        
+        
+        
+        //  NSLog(@"No Path! Let's give it one.");
+        
+        currentPath = [markdownDirectory stringByAppendingPathComponent:two];
+        currentPath = [currentPath stringByAppendingString:@".markdown"];
+        [currentPost setValue:currentPath forKey:@"path"];
+    }
+    
+//        NSLog(@"path = %@", currentPath);
+//        NSLog(@"title = %@", currentTitle);
+//        NSLog(@"text = %@", currentText);
+    
+    
+    //    [currentPost setValue:currentText forKey:@"text"];
+    
+    NSError *error;
+    
+    if (![currentText writeToFile:currentPath atomically:YES encoding:NSUTF8StringEncoding error:&error])
+    {
+        NSLog(@"saveText = Whoops, that did not work: %@", [error description]);
+    }
+    // NSLog(@"end");
+    
+}
+
+
+-(void)savePost:(JBPost *)currentPost
+{
+    NSLog(@"savePost");
+    NSString *currentPath = [currentPost path];
+    NSString *currentText = [currentPost text];
+        
+    NSError *error;
+    
+    if (![currentText writeToFile:currentPath atomically:YES encoding:NSUTF8StringEncoding error:&error])
+    {
+        NSLog(@"savePost = Whoops, that did not work: %@", [error description]);
+    }
+    
+}
+
+
+-(void)saveAllPosts
+{
+    NSLog(@"about to save all posts");
+    
+    for(JBPost *currentPost in [markdownFilesArrayContoller arrangedObjects])
+    {
+        [self savePost:currentPost];
+    }
+}
+
+- (BOOL) application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+    JBScoutTemplateController *importTemplateController = [[JBScoutTemplateController alloc] init];
+    
+    if ([importTemplateController importFromFile:filename])
+    {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (IBAction)enablePreview:sender
+{
+    [previewMenuItem setEnabled:YES];
+}
+
+- (IBAction)disablePreview:sender
+{
+    [previewMenuItem setEnabled:NO];
+}
+
+- (IBAction)showMainWindow:(id)sender
+{
+    [mainWindow makeKeyAndOrderFront:nil];
+    
+}
+
+
+#pragma mark textview delegate methods
+
+- (void)textDidChange:(NSNotification *)aNotification
+{
+    if([mainTextView string]==(id) [NSNull null] || [[mainTextView string] length]==0 || [[mainTextView string]isEqual:@""])
+    {
+        [self disablePreview:nil];
+    } else {
+        [self enablePreview:nil];
+    }
+}
+
+- (void)textDidEndEditing:(NSNotification *)aNotification
+{
+    [self saveText];
+}
+
+
+- (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+{
+    
+    if ([link rangeOfString:@"file:/"].location != NSNotFound)
+    {
+        link = [link stringByReplacingOccurrencesOfString:@"file:" withString:@""];
+
+        NSImage *currentImage = [[NSImage alloc] initWithContentsOfFile:link];
+        
+        NSRect newRect = [mainTextView firstRectForCharacterRange:NSMakeRange(charIndex, 0)];
+
+        NSRect finalRect = [mainWindow convertRectFromScreen:newRect];
+        
+        NSPoint newPoint;
+        newPoint.x = finalRect.origin.x;
+        newPoint.y = finalRect.origin.y;
+        
+        NSScreen *mainScreen = [NSScreen mainScreen];
+        NSRect screenRect = [mainScreen visibleFrame];
+        NSUInteger screenHeight = screenRect.size.height;
+
+        NSUInteger maxPosition;
+        
+        if (([mainWindow styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask)
+        
+        {
+            maxPosition = newRect.origin.y + 160;
+        } else {
+            maxPosition = newRect.origin.y + 95;
+
+        }
+        
+        
+        if (screenHeight > maxPosition)
+        {
+            [self toggleWindow:currentImage atPoint:newPoint flipped:YES];
+        } else {
+            [self toggleWindow:currentImage atPoint:newPoint flipped:NO];
+
+        }
+        
+        
+        
+        return YES;
+
+    }
+
+    return NO;
+}
+
+
+- (void)toggleWindow:(NSImage *)previewImage atPoint:(NSPoint)myPoint flipped:(BOOL)flipped
+{
+    if (!attachedWindow)
+    {
+        NSPoint buttonPoint = myPoint;
+        
+        
+        if (flipped)
+        {
+            attachedWindow = [[MAAttachedWindow alloc] initWithView:view
+                                                    attachedToPoint:buttonPoint
+                                                           inWindow:mainWindow
+                                                             onSide:3
+                                                         atDistance:15.0];
+
+        } else {
+            attachedWindow = [[MAAttachedWindow alloc] initWithView:view
+                                                    attachedToPoint:buttonPoint
+                                                           inWindow:mainWindow
+                                                             onSide:1
+                                                         atDistance:1.0];
+
+        }
+        
+        [attachedWindow setBorderWidth:0];
+        [attachedWindow setHasArrow:YES];
+        [attachedWindow setDrawsRoundCornerBesideArrow:YES];
+        
+        [myImageView setImage:previewImage];
+        [mainWindow addChildWindow:attachedWindow ordered:NSWindowAbove];
+        [attachedWindow makeKeyAndOrderFront:nil];
+    } else {
+        [mainWindow removeChildWindow:attachedWindow];
+        [attachedWindow orderOut:self];
+        attachedWindow = nil;
+    }
+}
+
+- (IBAction)closeMAWindow:(id)sender;
+{
+    [mainWindow removeChildWindow:attachedWindow];
+    [attachedWindow orderOut:self];
+    attachedWindow = nil;
+}
+
+- (void)boundsDidChangeNotification:(NSNotification *)notification
+{
+    [self closeMAWindow:nil];
+}
+
+
+@end

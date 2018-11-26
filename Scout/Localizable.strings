@@ -1,0 +1,39 @@
+/* 
+   Localizable.strings
+   Go
+
+   Created by Jon Buys on 7/30/10.
+   Copyright 2010 Home. All rights reserved.
+ */
+
+/* Host Item */
+"Post" = "Post";
+
+/* Plural Host Item */
+"Posts" = "Posts";
+
+/* Delete Host OK Button */
+"OK" = "OK";
+
+/* Delete Host Cancel Button */
+"Cancel" = "Cancel";
+
+/* Delete Single Host informative message */
+"areYouSure" = "Are you sure you want to delete this post?";
+
+/* Delete Single Host */
+"DeletePost" = "Delete";
+
+/* Delete Plural Hosts informative message */
+"PluralareYouSure" = "Are you sure you want to delete these posts?";
+
+/* Delete Plural Hosts */
+"PluralDeletePost" = "Delete Posts";
+
+/* A general alert that I tried to delete something, but it didn't work. */
+"SomethingWentWrong" = "Uh, oh, this isn't supposed to happen";
+
+/* Titles for preferences panel */
+"View 1 Title" = "General";
+"View 2 Title" = "Themes";
+"View 3 Title" = "License";

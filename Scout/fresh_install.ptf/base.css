@@ -1,0 +1,130 @@
+@font-face {
+    font-family: 'SignikaLight';
+    src: url('/f/Signika-Light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'SignikaRegular';
+    src: url('/f/Signika-Regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+html {
+	height: 100%;
+	margin-bottom: 1px;
+}
+
+body {
+	line-height: 1.6em;
+	font: 18px/27px 'SignikaLight', Verdana, sans-serif;
+	background: #F6F6F6;
+    color: #222; 
+}
+
+#container
+{
+	margin: 0 auto;
+	width: 655px;
+}
+
+#header
+{
+	font: 24px 'SignikaLight', Verdana, sans-serif;
+	font-variant: small-caps;
+	margin-top: 20px;
+	margin-bottom: 50px;
+	padding: 20px;
+}
+
+#content
+{
+	clear: left;
+	padding: 20px;
+}
+
+#content h2
+{
+	color:#000;
+	font-size: 140%;
+	margin: 0 0 .5em;
+}
+
+#footer
+{
+	font: 18px/27px 'SignikaRegular', Verdana, sans-serif;
+	text-align: right;
+	margin-top: 50px;
+	margin-bottom: 20px;
+	padding: 20px;
+	height: 1%;
+}
+
+pre {
+	background-color: white;
+	font-family: monospace;
+	font-size: 11pt;
+	font-style: normal;
+	font-weight: 400;
+	letter-spacing: 0.055em;
+	word-spacing: -0.071em;
+	line-height: 0.99em;
+	padding: 20px;
+	line-height: normal;
+	white-space: pre-wrap;
+	border: 1px solid black;
+	border-top-left-radius:     8px;
+	border-bottom-right-radius: 8px;
+}
+
+a {
+	color: #730707;
+	text-decoration: none;
+}
+
+a:hover {
+	color: black;
+	background-color: #D7D7D7;
+}
+
+img {
+	border: 1px solid black;
+}
+
+blockquote {	
+		padding-left: 1.2em;
+		margin-left: 3em;
+		border-left: solid black 1px;
+		line-height: 1.4em;
+}
+
+ul.archive {
+	list-style: none;
+	font-family: monospace;
+	font-size: 12pt;
+	line-height: 1.4em;
+}
+
+.archive a:visited {
+	color: gray;
+}
+
+.article {
+	display: block;
+    line-height: 1.6;
+}
+    
+.date {
+	font-size: 20px;
+	color: gray;
+}
+
+.sep {
+	color: silver;
+    text-align: center;
+    font-size: 22px;
+	margin: 60px;
+}
