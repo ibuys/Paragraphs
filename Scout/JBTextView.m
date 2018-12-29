@@ -368,22 +368,12 @@
         
     }
 
-    
-    
     NSFileManager *fileMan = [NSFileManager defaultManager];
     NSString *mediaPath = [path stringByAppendingPathComponent:@"media"];
-    
-    
-    
-    
-    
-    
-    
-    
+
     if (![fileMan fileExistsAtPath:mediaPath])
     {
         NSError *er;
-        
         
         if (![fileMan createDirectoryAtPath:mediaPath withIntermediateDirectories:NO attributes:nil error:&er])
         {

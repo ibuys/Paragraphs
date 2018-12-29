@@ -1021,9 +1021,11 @@
 
 - (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
-    
+//    NSLog(@"clickedOnLink %@", link);
     if ([link rangeOfString:@"file:/"].location != NSNotFound)
     {
+//        NSLog(@"Link is a local file");
+
         link = [link stringByReplacingOccurrencesOfString:@"file:" withString:@""];
 
         NSImage *currentImage = [[NSImage alloc] initWithContentsOfFile:link];

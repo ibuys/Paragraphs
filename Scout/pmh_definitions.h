@@ -1,7 +1,7 @@
 /* PEG Markdown Highlight
  * Copyright 2011-2016 Ali Rantakari -- http://hasseg.org
  * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
- * 
+ *
  * pmh_definitions.h
  */
 
@@ -9,20 +9,20 @@
 #define pmh_MARKDOWN_DEFINITIONS
 
 /** \file
-* \brief Global definitions for the parser.
-*/
+ * \brief Global definitions for the parser.
+ */
 
 
 /**
-* \brief Element types.
-* 
-* The first (documented) ones are language element types.
-* 
-* The last (non-documented) ones are utility types used
-* by the parser itself.
-* 
-* \sa pmh_element
-*/
+ * \brief Element types.
+ *
+ * The first (documented) ones are language element types.
+ *
+ * The last (non-documented) ones are utility types used
+ * by the parser itself.
+ *
+ * \sa pmh_element
+ */
 typedef enum
 {
     pmh_LINK,               /**< Explicit link */
@@ -81,29 +81,29 @@ typedef enum
 } pmh_element_type;
 
 /**
-* \brief Number of types in pmh_element_type.
-* \sa pmh_element_type
-*/
+ * \brief Number of types in pmh_element_type.
+ * \sa pmh_element_type
+ */
 #define pmh_NUM_TYPES 31
 
 /**
-* \brief Number of *language element* types in pmh_element_type.
-* \sa pmh_element_type
-*/
+ * \brief Number of *language element* types in pmh_element_type.
+ * \sa pmh_element_type
+ */
 #define pmh_NUM_LANG_TYPES (pmh_NUM_TYPES - 6)
 
 
 /**
-* \brief A Language element occurrence.
-*/
+ * \brief A Language element occurrence.
+ */
 struct pmh_Element
 {
     pmh_element_type type;    /**< \brief Type of element */
     unsigned long pos;        /**< \brief Unicode code point offset marking the
-                                          beginning of this element in the
-                                          input. */
+                               beginning of this element in the
+                               input. */
     unsigned long end;        /**< \brief Unicode code point offset marking the
-                                          end of this element in the input. */
+                               end of this element in the input. */
     struct pmh_Element *next; /**< \brief Next element in list */
     char *label;              /**< \brief Label (for links and references) */
     char *address;            /**< \brief Address (for links and references) */
@@ -111,15 +111,15 @@ struct pmh_Element
 typedef struct pmh_Element pmh_element;
 
 /**
-* \brief Bitfield enumeration of supported Markdown extensions.
-*/
+ * \brief Bitfield enumeration of supported Markdown extensions.
+ */
 enum pmh_extensions
 {
     pmh_EXT_NONE    = 0,        /**< No extensions */
     pmh_EXT_NOTES   = (1 << 0), /**< Footnote syntax:
-                                     http://pandoc.org/README.html#footnotes */
+                                 http://pandoc.org/README.html#footnotes */
     pmh_EXT_STRIKE  = (1 << 1)  /**< Strike-through syntax:
-                                     http://pandoc.org/README.html#strikeout */
+                                 http://pandoc.org/README.html#strikeout */
 };
 
 #endif

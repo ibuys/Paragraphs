@@ -335,9 +335,24 @@
                         NSColor *newBGColor = [JBColorWithHex colorWithHex:[chunks objectAtIndex:1]];
                         [mainBox setFillColor:newBGColor];
                         
-//                        [hl1 applyStylesFromStylesheet:styleContents
-//                                     withErrorDelegate:self
-//                                         errorSelector:@selector(handleStyleParsingErrors:)];
+                        [hl1
+                         applyStylesFromStylesheet:styleContents
+                         withErrorHandler:^(NSArray *errorMessages) {
+                             NSMutableString *errorsInfo = [NSMutableString string];
+                             for (NSString *str in errorMessages)
+                             {
+                                 [errorsInfo appendString:@"• "];
+                                 [errorsInfo appendString:str];
+                                 [errorsInfo appendString:@"\n"];
+                             }
+                             
+                             NSAlert *alert = [NSAlert alertWithMessageText:@"There were some errors when parsing the stylesheet:"
+                                                              defaultButton:@"Ok"
+                                                            alternateButton:nil
+                                                                otherButton:nil
+                                                  informativeTextWithFormat:@"%@", errorsInfo];
+                             [alert runModal];
+                         }];
                         
                         [hl1
                          applyStylesFromStylesheet:styleContents

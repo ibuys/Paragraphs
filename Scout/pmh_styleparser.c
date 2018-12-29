@@ -1,9 +1,9 @@
 /* PEG Markdown Highlight
  * Copyright 2011-2016 Ali Rantakari -- http://hasseg.org
  * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
- * 
+ *
  * styleparser.c
- * 
+ *
  * Parser for custom syntax highlighting stylesheets.
  */
 
@@ -159,7 +159,7 @@ static char *standardize_str(char *str)
 static pmh_attr_argb_color *new_argb_color(int r, int g, int b, int a)
 {
     pmh_attr_argb_color *c = (pmh_attr_argb_color *)
-                             malloc(sizeof(pmh_attr_argb_color));
+    malloc(sizeof(pmh_attr_argb_color));
     c->red = r; c->green = g; c->blue = b; c->alpha = a;
     return c;
 }
@@ -206,7 +206,7 @@ static pmh_attr_value *new_attr_value()
 static pmh_attr_font_styles *new_font_styles()
 {
     pmh_attr_font_styles *ret = (pmh_attr_font_styles *)
-                                malloc(sizeof(pmh_attr_font_styles));
+    malloc(sizeof(pmh_attr_font_styles));
     ret->italic = false;
     ret->bold = false;
     ret->underlined = false;
@@ -216,7 +216,7 @@ static pmh_attr_font_styles *new_font_styles()
 static pmh_attr_font_size *new_font_size()
 {
     pmh_attr_font_size *ret = (pmh_attr_font_size *)
-                              malloc(sizeof(pmh_attr_font_size));
+    malloc(sizeof(pmh_attr_font_size));
     ret->is_relative = false;
     ret->size_pt = 0;
     return ret;
@@ -390,7 +390,7 @@ static pmh_style_attribute *interpret_attributes(style_parser_data *p_data,
             char *hexstr = trim_str(cur->value);
             // new_argb_from_hex_str() reports conversion errors
             attr->value->argb_color =
-                new_argb_from_hex_str(p_data, cur->line_number, hexstr);
+            new_argb_from_hex_str(p_data, cur->line_number, hexstr);
             if (attr->value->argb_color == NULL) {
                 free_style_attributes(attr);
                 attr = NULL;
@@ -483,10 +483,10 @@ static void interpret_and_add_style(style_parser_data *p_data,
             isSelectionType = true, type = pmh_NO_TYPE;
         else {
             report_error(p_data, style_rule_line_number,
-                "Style rule '%s' is not a language element type name or "
-                "one of the following: 'editor', 'editor-current-line', "
-                "'editor-selection'",
-                style_rule_name);
+                         "Style rule '%s' is not a language element type name or "
+                         "one of the following: 'editor', 'editor-current-line', "
+                         "'editor-selection'",
+                         style_rule_name);
             return;
         }
     }
@@ -646,12 +646,12 @@ static block *get_blocks(char *input)
 #define ASSIGNMENT_OP_UITEXT        "':' or '='"
 #define IS_ASSIGNMENT_OP(c)         ((c) == ':' || (c) == '=')
 #define IS_STYLE_RULE_NAME_CHAR(c)  \
-    ( (c) != '\0' && !isspace(c) \
-      && !char_begins_linecomment(c) && !IS_ASSIGNMENT_OP(c) )
+( (c) != '\0' && !isspace(c) \
+&& !char_begins_linecomment(c) && !IS_ASSIGNMENT_OP(c) )
 #define IS_ATTRIBUTE_NAME_CHAR(c)  \
-    ( (c) != '\0' && !char_begins_linecomment(c) && !IS_ASSIGNMENT_OP(c) )
+( (c) != '\0' && !char_begins_linecomment(c) && !IS_ASSIGNMENT_OP(c) )
 #define IS_ATTRIBUTE_VALUE_CHAR(c)  \
-    ( (c) != '\0' && !char_begins_linecomment(c) )
+( (c) != '\0' && !char_begins_linecomment(c) )
 
 static char *get_style_rule_name(multi_value *line)
 {
@@ -687,7 +687,7 @@ static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
     size_t name_start_index;
     for (name_start_index = 0;
          ( *(str+name_start_index) != '\0' &&
-           isspace(*(str+name_start_index)) );
+          isspace(*(str+name_start_index)) );
          name_start_index++);
     
     // Scan until attribute name characters end:
@@ -704,7 +704,7 @@ static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
     size_t assignment_end_index;
     for (assignment_end_index = name_end_index;
          ( *(str + assignment_end_index) != '\0' &&
-           !IS_ASSIGNMENT_OP(*(str + assignment_end_index)) );
+          !IS_ASSIGNMENT_OP(*(str + assignment_end_index)) );
          assignment_end_index++);
     
     // Scan over the found assignment operator, or report error:
@@ -745,8 +745,8 @@ static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
 
 
 #define HAS_UTF8_BOM(x)         ( ((*x & 0xFF) == 0xEF)\
-                                  && ((*(x+1) & 0xFF) == 0xBB)\
-                                  && ((*(x+2) & 0xFF) == 0xBF) )
+&& ((*(x+1) & 0xFF) == 0xBB)\
+&& ((*(x+2) & 0xFF) == 0xBF) )
 
 // - Removes UTF-8 BOM
 // - Standardizes line endings to \n
@@ -841,8 +841,8 @@ static void _sty_parse(style_parser_data *p_data)
                 pmhsp_PRINTF("  Attr: '%s' Value: '%s'\n",
                              attr_name_str, attr_value_str);
                 raw_attribute *attribute =
-                    new_raw_attribute(attr_name_str, attr_value_str,
-                                      attr_line_cur->line_number);
+                new_raw_attribute(attr_name_str, attr_value_str,
+                                  attr_line_cur->line_number);
                 if (attributes_head == NULL) {
                     attributes_head = attribute;
                     attributes_tail = attribute;
@@ -876,11 +876,11 @@ static void _sty_parse(style_parser_data *p_data)
 static pmh_style_collection *new_style_collection()
 {
     pmh_style_collection *sc = (pmh_style_collection *)
-                               malloc(sizeof(pmh_style_collection));
+    malloc(sizeof(pmh_style_collection));
     
     sc->element_styles = (pmh_style_attribute**)
-                         malloc(sizeof(pmh_style_attribute*)
-                                * pmh_NUM_LANG_TYPES);
+    malloc(sizeof(pmh_style_attribute*)
+           * pmh_NUM_LANG_TYPES);
     int i;
     for (i = 0; i < pmh_NUM_LANG_TYPES; i++)
         sc->element_styles[i] = NULL;
@@ -907,7 +907,7 @@ void pmh_free_style_collection(pmh_style_collection *coll)
 static style_parser_data *new_style_parser_data(char *input)
 {
     style_parser_data *p_data = (style_parser_data*)
-                                malloc(sizeof(style_parser_data));
+    malloc(sizeof(style_parser_data));
     p_data->input = input;
     p_data->styles_pos = 0;
     p_data->styles = new_style_collection();
